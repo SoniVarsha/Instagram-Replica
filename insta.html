@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <script src="https://kit.fontawesome.com/3416477e81.js" crossorigin="anonymous"></script> -->
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.js" type="text/JavaScript"> </script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    
+
+    <title>Instagram</title>
+    
+  
+</head>
+<style>
+.card{
+    min-width: 30%;
+    border-bottom:  1px solid #d2c4c4;
+}
+
+.post-img{
+    width: 30%;
+}
+
+.action-items{
+    display: flex;
+    justify-content: space-between;
+    padding: 2px 5px;
+    margin-right: 70vw;
+}
+
+i{
+    margin: 0px 3px;
+}
+
+.meta{
+    margin: 0px;
+}
+.likes{
+    margin: 0px;
+}
+
+.description{
+    margin-top: 0px;
+}
+.title{
+    margin: 10px 0px;
+}
+
+</style>
+<body>
+    <div id="postsWrapper">
+        <!-- fa fa-bookmark - filled     -->
+  <!-- <i class="	fa fa-bookmark"></i>   --> 
+  <!-- <i class="	fa fa-heart-o"></i> -->
+    </div>
+    <div class="card"> 
+     
+</div>
+     <script>
+let posts = []
+let pageNo = 1;
+let pageSize=10;
+let morePostLoaded = false
+
+
+    function createPostCard(postObj){
+
+const card = $(`  
+<div class="card">
+<h3 class="title"> ${postObj.title}   </h3>
+
+<img class="post-img" 
+src="${postObj.image}"
+ alt="Post">
+  
+  <div class="action-items">
+      
+      <div class="cta">
+  <i class="	fa fa-heart-o"></i>
+  <!-- <i class="	fa fa-heart"></i> -->
+  
+  <i class="fa fa-comment-o"></i>
+          
+      </div>
+  
+  
+      <div class="cta">
+  
+  
+  <i class=" fa ${postObj.saved ? 'fa-bookmark':'fa-bookmark-o'}"></i> 
+
+  
+  
+  
+  
+  </div>
+  </div>
+  
+  <div class="meta">
+  <h5 class="likes" >${postObj.likes}</h5>
+  <p class="description">${postObj.descriptiom}</p>
+  </div>
+  </div>
+    `)
+
+
+    return card
+    }
+
+
+
+    function renderPosts(){
+const postsWrapper = $('#postsWrapper')
+
+    for(let counter=(pageNo-1)*pageSize; counter< pageNo*pageSize ; counter++){
+const currentCard = createPostCard(posts[counter])
+postsWrapper.append(currentCard)
+}
+pageNo++
+}
+
+$.ajax({
+   method:'GET',
+   url: "./posts.json",
+   success: function(data){
+    console.log(data)
+    posts = data,
+    renderPosts()
+   },
+error: function(err){
+    console.log(error)
+}
+    })
+
+    function onScrollHandler(e){
+        const scrollHt = $(window).scrollTop();
+        console.log(scrollHt)
+   if(scrollHt >= 2654){
+    //load 10 more posts
+    // console.log('loading done')
+
+    if(!morePostLoaded){
+    renderPosts()
+    console.log('loading done once')
+    morePostLoaded =true
+    }
+
+
+   }
+    }
+ 
+    // const postsWrapper = $('#postsWrapper')
+    const body =$(window)
+    body.on('scroll',onScrollHandler)
+
+
+   
+
+    </script>
+</body>
+</html>
+
+
+
+<!-- 2514/    3861
+306       430
+3060/    4300 -->
+
+<!-- ht of one card = 306
+ht of 10 card = 3060
+ht when 10th card loads , ht = 3060-306 = 2654
+ 
+check if the scroll ht is near to 1pth item, load 10 more posts -->
